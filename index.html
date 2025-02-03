@@ -60,7 +60,6 @@
 
         .container.red-bg {
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-            /* Red shadow */
         }
 
         input {
@@ -118,7 +117,11 @@
 
         .terminal .error {
             color: red;
-            /* Error message in red */
+        }
+
+        .progress {
+            color: lime;
+            margin-top: 20px;
         }
 
         @keyframes shake {
@@ -198,12 +201,13 @@
         <br>
         <button onclick="checkKey()">Submit</button>
         <div class="message" id="message"></div>
+        <div class="progress" id="progress">Attempting 1/3</div>
     </div>
 
     <script>
         const correctKeys = ["123456", "654321", "112233"];
         let currentStep = 0;
-        let hasEnteredWrongKeyOnce = false;  // Flag to track if the user has entered a wrong key once
+        let hasEnteredWrongKeyOnce = false;
 
         const terminalMessages = [
             "Running keyValidator.exe...",
@@ -228,21 +232,20 @@
             let button = document.querySelector("button");
             let messageDiv = document.getElementById("message");
             let container = document.getElementById("container");
+            let progressDiv = document.getElementById("progress");
 
             if (inputField.value === "" || !correctKeys.includes(inputField.value)) {
                 if (!hasEnteredWrongKeyOnce) {
-                    // Show the image container for the first invalid attempt
-                    hasEnteredWrongKeyOnce = true;  // Mark that the first invalid attempt has happened
+                    hasEnteredWrongKeyOnce = true;
                     container.classList.add("black-bg");
                     container.innerHTML = `
-                <div class="image-container">
-                    <img src="hint.jpg" alt="Hint Image">
-                    <button class="hint-button" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')">Take Hint</button>
-                    <button class="hint-button" onclick="goBack()">Back to Enter Key</button>
-                </div>
-            `;
+                        <div class="image-container">
+                            <img src="hint.jpg" alt="Hint Image">
+                            <button class="hint-button" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')">Take Hint</button>
+                            <button class="hint-button" onclick="goBack()">Back to Enter Key</button>
+                        </div>
+                    `;
                 } else {
-                    // For subsequent invalid attempts, show the terminal-like screen with error message
                     container.classList.add("black-bg");
                     container.innerHTML = '<div class="terminal" id="terminal"></div>';
                     let terminalDiv = document.getElementById("terminal");
@@ -256,42 +259,35 @@
                         "Access Denied. Invalid key.",
                     ];
 
-                    // After adding the random terminal messages, add the red-colored error message
                     let index = 0;
                     let interval = setInterval(() => {
                         if (index < messages.length) {
                             let p = document.createElement("p");
-
-                            // If it's the last message, add the red error class
                             if (index === messages.length - 1) {
                                 p.textContent = messages[index];
-                                p.classList.add("error"); // Add the "error" class for red color
+                                p.classList.add("error");
                             } else {
                                 p.textContent = messages[index];
                             }
-
                             terminalDiv.appendChild(p);
                             index++;
                         } else {
                             clearInterval(interval);
 
-                            // Add red shadow before shaking
                             container.style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.7)";
-
-                            // Show shake animation for invalid key attempt
                             container.classList.add("shake");
                             setTimeout(() => {
                                 container.classList.remove("shake");
-                                container.style.boxShadow = ""; // Reset shadow
+                                container.style.boxShadow = "";
 
-                                // Reset input and allow the user to try again
                                 container.classList.remove("black-bg");
                                 container.innerHTML = `
-                <input type="text" id="keyInput" maxlength="6" placeholder="Enter Key">
-                <br>
-                <button onclick="checkKey()">Submit</button>
-                <div class="message" id="message"></div>
-            `;
+                                    <input type="text" id="keyInput" maxlength="6" placeholder="Enter Key">
+                                    <br>
+                                    <button onclick="checkKey()">Submit</button>
+                                    <div class="message" id="message"></div>
+                                    <div class="progress" id="progress">Attempting ${currentStep + 1}/3</div>
+                                `;
                             }, 1500);
                         }
                     }, 1000);
@@ -300,7 +296,6 @@
                 return;
             }
 
-            // Proceed with terminal messages if key is entered correctly
             container.classList.add("black-bg");
             container.innerHTML = '<div class="terminal" id="terminal"></div>';
             let terminalDiv = document.getElementById("terminal");
@@ -331,29 +326,29 @@
                         } else {
                             container.classList.remove("black-bg");
                             container.innerHTML = `
-                        <input type="text" id="keyInput" maxlength="6" placeholder="Enter Key">
-                        <br>
-                        <button onclick="checkKey()">Submit</button>
-                        <br>
-                        <div class="message" id="message">Key Accepted. Enter Next Key.</div>
-                    `;
+                                <input type="text" id="keyInput" maxlength="6" placeholder="Enter Key">
+                                <br>
+                                <button onclick="checkKey()">Submit</button>
+                                <br>
+                                <div class="message" id="message">Key Accepted. Enter Next Key.</div>
+                                <div class="progress" id="progress">Attempting ${currentStep + 1}/3</div>
+                            `;
                         }
                     }
                 }
             }, 1000);
         }
 
-
         function goBack() {
             let container = document.getElementById("container");
             container.classList.remove("black-bg");
 
-            // Reset the screen back to entering the key
             container.innerHTML = ` 
                 <input type="text" id="keyInput" maxlength="6" placeholder="Enter Key">
                 <br>
                 <button onclick="checkKey()">Submit</button>
                 <div class="message" id="message"></div>
+                <div class="progress" id="progress">Attempting 1/3</div>
             `;
         }
     </script>
